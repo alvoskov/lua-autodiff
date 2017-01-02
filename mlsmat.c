@@ -1,7 +1,16 @@
 /*
- * MATLAB-style matrices for LUA 5.3
- *
- * (C) 2016-2017 Alexey Voskov
+ * mlsmat.c  MATLAB-style vectors for Lua 5.3. This file is designed
+ * as dynamic library (module) for Lua containing implementation of
+ * several classes:
+ *   RealVector -- Vector of doubles
+ *   IndexRange -- Index ranges for RealVector
+ * It also initializes empty DualNVector table (that is reseved
+ * for dual numbers implemented in mlslib.lua)
+ * 
+ * This module also can be linked statically
+ *   
+ * (C) 2016-2017 Alexey Voskov (alvoskov@gmail.com)
+ * License: MIT (X11) license
  */
 
 #include <stdio.h>
@@ -15,6 +24,10 @@
 #include "lauxlib.h"
 
 #include "mlsmat.h"
+
+#ifndef M_PI
+#define M_PI 3.141592653589793238462643
+#endif
 
 /*========== IndexRange class ==========*/
 /*
@@ -605,11 +618,11 @@ int __declspec(dllexport) luaopen_mlsmat(lua_State* L)
 	luaL_newmetatable(L, "MLSMat::DualNVector");
 	lua_settable(L, -3);
 	/* Short aliases for constructors */
-	lua_pushstring(L, "vec");
+	lua_pushstring(L, "Vec");
 	lua_pushcfunction(L, realvector_new);
 	lua_settable(L, -3);
 
-	lua_pushstring(L, "rng");
+	lua_pushstring(L, "Rng");
 	lua_pushcfunction(L, indexrange_new);
 	lua_settable(L, -3);
 

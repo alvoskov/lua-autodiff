@@ -2,11 +2,15 @@
 -- Implementation of DualNVector class: n-dimensional dual number vector for Lua 5.3
 -- It actively uses RealVector class implemented as C library
 --
--- (C) 2016-2017 Alexey Voskov
+-- (C) 2016-2017 Alexey Voskov (alvoskov@gmail.com)
 -- License: MIT (X11) license
 --
 
 -- A universal loader for binary parts: both for static and dynamic linking
+-- Two modes of loading are possible:
+-- * Dynamic linking - mlsmat.dll (RealVector class) is loaded by require("mlsmat")
+-- * Static linking - mlsmat.c (RealVector class) is loaded by cwrapper.c (or user)
+--   and taken from __MLSMat global variable
 local m = nil
 if __MLSMat == nil then -- Dynamic linking
 	m = require("mlsmat")
@@ -31,7 +35,6 @@ function m.isindex(ind)
 	end
 end
 
-
 -- DualNVector.new  Creates a dual number either from
 -- scratch or from user-defined RealVector variables
 -- Usage:
@@ -47,9 +50,9 @@ function m.DualNVector.new (...)
 	if #arg == 2 and m.isindex(arg[1]) and m.isindex(arg[2]) then
 		-- Create empty vector
 		local size, nvars = arg[1], arg[2]
-		obj.real = m.vec(size)
+		obj.real = m.Vec(size)
 		for i = 1, nvars do
-			obj.imag[i] = m.vec(size)
+			obj.imag[i] = m.Vec(size)
 		end
 	else
 		-- Create vector from RealVector vectors
@@ -126,6 +129,9 @@ function m.DualNVector.var(value, varind, nvars)
 	return obj
 end
 
+-- DualNVector.copy  Creates a full copy of a class example
+-- Usage:
+--   objcopy = obj:copy()
 function m.DualNVector:copy()
 	local obj = {}
 	obj.real, obj.imag = self.real:copy(), {}
@@ -284,9 +290,6 @@ function m.DualNVector:__unm()
 	return r
 end
 
-
-
-
 -- Returns number of elements (dual numbers) in the vector
 function m.DualNVector:__len()
 	return #self.real
@@ -305,6 +308,7 @@ function m.DualNVector:__tostring()
 	return str
 end
 
+-- Returns subvector using user-defined index (see RealVector indexing modes)
 function m.DualNVector:__index(ind)
 	if type(ind) == "number" or type(ind) == "table" then
 		local r = {imag = {}}
@@ -332,10 +336,6 @@ function m.DualNVector:__index(ind)
 end
 
 ---- Aliases for some methods
-function m.Vec(data)
-	return m.RealVector.new(data)
-end
-
 function m.DConst(value, nvars)
 	return m.DualNVector.const(value, nvars)
 end
@@ -343,7 +343,6 @@ end
 function m.DVar(value, varind, nvars)
 	return m.DualNVector.var(value, varind, nvars)
 end
-
 
 -- Return module table
 return m

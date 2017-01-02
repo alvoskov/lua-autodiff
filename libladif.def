@@ -1,0 +1,10 @@
+LIBRARY libladif.dll
+EXPORTS
+LuaFunc_Init
+LuaFunc_Eval
+LuaFunc_GetValueLength
+LuaFunc_GetValue
+LuaFunc_Close
+LuaFunc_GetErrMsg
+LuaFunc_GetBeta0
+LuaFunc_GetNParams

@@ -1,6 +1,7 @@
 --
+-- testdual.lua
 -- Tests for DualNVector class (implementation of dual numbers)
--- (C) 2016-2017 Alexey Voskov
+-- (C) 2016-2017 Alexey Voskov (alvoskov@gmail.com)
 -- License: MIT (X11) License 
 --
 
@@ -159,11 +160,3 @@ test_basic()
 test_exp()
 test_div()
 test_power()
-
-
-print('------------')
-local x = d.Vec{1,2,3,4,5}
-local y = d.DConst(d.Vec{3,4,5,6,7}, 1, 1)
-local rr = x + y
-print(rr)
-
